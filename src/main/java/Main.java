@@ -26,7 +26,7 @@ public class Main {
                 if (commands.contains(input_array[1])) {
                     System.out.printf("%s is a shell builtin%n", input_array[1]);
                 } else {
-                    System.out.printf("%s: command not found%n", input_array[1]);
+                    System.out.printf("%s: not found%n", input_array[1]);
                 }
             } else {
                 System.out.printf("%s: command not found%n", input_array[0]);
