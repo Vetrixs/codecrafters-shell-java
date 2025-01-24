@@ -37,6 +37,7 @@ public class Main {
                 case "type":
                     if (buildInCommands.contains(input_array[1])) {
                         System.out.printf("%s is a shell builtin%n", input_array[1]);
+                        break;
                     }
                     Path executable = searchInPath(path, input_array[1]);
                     if (executable != null) {
