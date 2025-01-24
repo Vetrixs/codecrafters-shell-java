@@ -62,6 +62,7 @@ public class Main {
             }
             Optional<Path> first = Files.walk(new File(path).toPath(),0)
                     .filter(Files::isExecutable)
+                    .peek(System.out::println)
                     .filter(file -> file.getFileName().toString().equalsIgnoreCase(command))
                     .findFirst();
 
