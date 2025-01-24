@@ -39,14 +39,14 @@ public class Main {
                         System.out.printf("%s is a shell builtin%n", input_array[1]);
                     }
                     Path executable = searchInPath(path, input_array[0]);
-                    if(executable != null) {
+                    if (executable != null) {
                         System.out.printf("%s is %s%n", input_array[1], executable);
                     }
-                    {
-                        System.out.printf("%s: not found%n", input_array[1]);
-                    }
+                {
+                    System.out.printf("%s: not found%n", input_array[1]);
+                }
 
-                    break;
+                break;
             }
         } while (true);
     }
@@ -57,10 +57,10 @@ public class Main {
         }
         String[] paths = pathEnv.split(":");
         for (String path : paths) {
-            if(Files.notExists(Path.of(path))){
+            if (Files.notExists(Path.of(path))) {
                 continue;
             }
-            Optional<Path> first = Files.find(Path.of(path), 0, (p, a) -> p.getFileName().toString().equalsIgnoreCase(command)).peek(System.out::println).findFirst();
+            Optional<Path> first = Files.find(Path.of(path), 1, (p, a) -> p.getFileName().toString().equalsIgnoreCase(command)).peek(System.out::println).findFirst();
 
             if (first.isPresent()) {
                 return first.get();
