@@ -45,8 +45,9 @@ public class Main {
                     } else {
                         System.out.printf("%s: not found%n", input_array[1]);
                     }
-
                     break;
+                default:
+                    System.out.printf("%s: command not found%n", input_array[0]);
             }
         } while (true);
     }
