@@ -41,12 +41,11 @@ public class Main {
                     Path executable = searchInPath(path, input_array[1]);
                     if (executable != null) {
                         System.out.printf("%s is %s%n", input_array[1], executable);
+                    } else {
+                        System.out.printf("%s: not found%n", input_array[1]);
                     }
-                {
-                    System.out.printf("%s: not found%n", input_array[1]);
-                }
 
-                break;
+                    break;
             }
         } while (true);
     }
