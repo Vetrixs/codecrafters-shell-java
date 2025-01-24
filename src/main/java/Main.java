@@ -60,11 +60,7 @@ public class Main {
             if(Files.notExists(Path.of(path))){
                 continue;
             }
-            Optional<Path> first = Files.walk(new File(path).toPath(),0)
-                    .filter(Files::isExecutable)
-                    .peek(System.out::println)
-                    .filter(file -> file.getFileName().toString().equalsIgnoreCase(command))
-                    .findFirst();
+            Optional<Path> first = Files.find(Path.of(path), 0, (p, a) -> p.getFileName().toString().equalsIgnoreCase(command)).findFirst();
 
             if (first.isPresent()) {
                 return first.get();
