@@ -38,7 +38,7 @@ public class Main {
                     if (buildInCommands.contains(input_array[1])) {
                         System.out.printf("%s is a shell builtin%n", input_array[1]);
                     }
-                    Path executable = searchInPath(path, input_array[0]);
+                    Path executable = searchInPath(path, input_array[1]);
                     if (executable != null) {
                         System.out.printf("%s is %s%n", input_array[1], executable);
                     }
@@ -60,13 +60,8 @@ public class Main {
             if (Files.notExists(Path.of(path))) {
                 continue;
             }
-            Optional<Path> first = Files.find(
-                    Path.of(path), 1, (p, a) -> {
-                            System.out.println(p.getFileName());
-                            return p.getFileName().toString().equalsIgnoreCase(command);})
-                    .peek(System.out::println)
+            Optional<Path> first = Files.find(Path.of(path), 1, (p, a) -> p.getFileName().toString().equalsIgnoreCase(command))
                     .findFirst();
-
             if (first.isPresent()) {
                 return first.get();
             }
