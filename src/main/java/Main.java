@@ -57,11 +57,10 @@ public class Main {
         }
         String[] paths = pathEnv.split(":");
         for (String path : paths) {
-            File pathFile = new File(path);
-            if(!pathFile.exists()){
+            if(Files.notExists(Path.of(path))){
                 continue;
             }
-            Optional<Path> first = Files.walk(new File(path).toPath())
+            Optional<Path> first = Files.walk(new File(path).toPath(),0)
                     .filter(Files::isExecutable)
                     .filter(file -> file.getFileName().toString().equalsIgnoreCase(command))
                     .findFirst();
