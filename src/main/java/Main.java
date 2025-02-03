@@ -1,4 +1,3 @@
-import javax.swing.plaf.InsetsUIResource;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +15,7 @@ public class Main {
         buildInCommands.add("type");
         buildInCommands.add("exit");
         buildInCommands.add("echo");
+        buildInCommands.add("pwd");
 
         String path = System.getenv("PATH");
 
@@ -26,7 +26,7 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
 
-            String[] input_array = input.split(" ", 2);
+            String[] input_array = input.split(" ");
 
 
             switch (input_array[0]) {
@@ -37,6 +37,9 @@ public class Main {
                     break;
                 case "type":
                     typeCommand(buildInCommands, input_array, path);
+                    break;
+                case "pwd":
+                    System.out.println(Paths.get("").toAbsolutePath());
                     break;
                 default:
                     Path executable = searchInPath(path, input_array[0]);
@@ -51,12 +54,12 @@ public class Main {
 
     private static void runExternalProgram(String[] input_array) {
         Process process;
-        try  {
+        try {
             // Execute the external command.
             process = Runtime.getRuntime().exec(input_array);
 
             // Get streams for reading from and writing to the process
-            InputStream inputStream  = process.getInputStream();
+            InputStream inputStream = process.getInputStream();
             OutputStream outputStream = process.getOutputStream();
 
             // Read console input and write to the process
@@ -65,10 +68,11 @@ public class Main {
 
             // Read output from the process and print it to console.
             int c;
-            while((c = inputStream.read()) != -1) {
-                System.out.print((char)c);
+            while ((c = inputStream.read()) != -1) {
+                System.out.print((char) c);
             }
-        } catch(IOException e) {
+
+        } catch (IOException e) {
             System.err.println("Error executing command: " + e.getMessage());
         }
     }
@@ -93,7 +97,6 @@ public class Main {
         String splitter = ":";
         if (System.getProperty("os.name").startsWith("Windows")) {
             splitter = ";";
-            // TODO: load my own env into the program, windows style
         }
         // Split the PATH environment variable into individual directories
         String[] paths = pathEnv.split(splitter);
