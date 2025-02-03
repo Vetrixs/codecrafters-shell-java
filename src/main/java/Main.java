@@ -2,10 +2,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -33,7 +31,7 @@ public class Main {
                 case "exit":
                     System.exit(0);
                 case "echo":
-                    System.out.println(input_array[1]);
+                    System.out.println(Arrays.stream(input_array).skip(1).collect(Collectors.joining(" ")));
                     break;
                 case "type":
                     typeCommand(buildInCommands, input_array, path);
