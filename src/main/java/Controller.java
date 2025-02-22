@@ -44,7 +44,7 @@ public class Controller {
         }
         String targetDir = input_array[1];
         if (Files.exists(Path.of(targetDir))) {
-            currentDirectory = Path.of(targetDir).toAbsolutePath();
+            currentDirectory = Path.of(targetDir);
         } else {
             System.out.printf("%s: %s: No such file or directory%n", input_array[0], input_array[1]);
         }
