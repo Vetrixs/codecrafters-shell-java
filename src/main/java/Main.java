@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,22 +55,26 @@ public class Main {
         Process process;
         try {
             // Execute the external command.
-            process = Runtime.getRuntime().exec(input_array);
+            process = new ProcessBuilder(input_array).start();
 
-            // Get streams for reading from and writing to the process
-            InputStream inputStream = process.getInputStream();
             OutputStream outputStream = process.getOutputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-            // Read console input and write to the process
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-
-            // Read output from the process and print it to console.
-            int c;
-            while ((c = inputStream.read()) != -1) {
-                System.out.print((char) c);
+            while (process.isAlive()) {
+                int c;
+                System.out.println("Normal Stream:");
+                while ((c = bufferedReader.read()) != -1) {
+                    System.out.print((char) c);
+                }
+                int a;
+                System.out.println("#####");
+                System.out.println("Error Stream:");
+                while ((a = bufferedErrorReader.read()) != -1) {
+                    System.out.print((char) a);
+                }
             }
-
+            System.out.println("Exit status: %d".formatted(process.exitValue()));
         } catch (IOException e) {
             System.err.println("Error executing command: " + e.getMessage());
         }
