@@ -58,19 +58,17 @@ public class Main {
             process = new ProcessBuilder(input_array).start();
 
             OutputStream outputStream = process.getOutputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
             while (process.isAlive()) {
                 int c;
                 System.out.println("Normal Stream:");
-                while ((c = bufferedReader.read()) != -1) {
+                while ((c = process.getInputStream().read()) != -1) {
                     System.out.print((char) c);
                 }
                 int a;
                 System.out.println("#####");
                 System.out.println("Error Stream:");
-                while ((a = bufferedErrorReader.read()) != -1) {
+                while ((a = process.getErrorStream().read()) != -1) {
                     System.out.print((char) a);
                 }
             }
