@@ -3,11 +3,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // Uncomment this block to pass the first stage
 
         Set<String> buildInCommands = new HashSet<>();
         buildInCommands.add("type");
@@ -25,7 +26,6 @@ public class Main {
             String input = scanner.nextLine();
 
             String[] input_array = input.split(" ");
-
 
             switch (input_array[0]) {
                 case "exit":
@@ -96,6 +96,7 @@ public class Main {
         if (System.getProperty("os.name").startsWith("Windows")) {
             splitter = ";";
         }
+
         // Split the PATH environment variable into individual directories
         String[] paths = pathEnv.split(splitter);
         for (String directory : paths) {
@@ -106,11 +107,18 @@ public class Main {
                     continue;
                 }
 
-                // Search for an executable with the given name in this directory
-                Optional<Path> executable = Files.find(directoryPath, 1,
-                                (p, attributes) -> p.getFileName().toString().equals(command)
-                                        && Files.isExecutable(p))
-                        .findFirst();
+                Optional<Path> executable;
+                if (command.endsWith(".exe")) {
+                    executable = Files.find(directoryPath, 1,
+                                    (p, attributes) -> p.getFileName().toString().equals(command)
+                                            && Files.isExecutable(p))
+                            .findFirst();
+                } else {
+                    executable = Files.find(directoryPath, 1,
+                                    (p, attributes) -> p.getFileName().toString().replaceFirst("\\.exe$", "").equals(command)
+                                            && Files.isExecutable(p))
+                            .findFirst();
+                }
 
                 if (executable.isPresent()) {
                     return executable.get();
