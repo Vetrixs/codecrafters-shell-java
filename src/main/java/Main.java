@@ -70,6 +70,7 @@ public class Main {
                 System.out.println("Error Stream:");
                 while ((a = process.getErrorStream().read()) != -1) {
                     System.out.print((char) a);
+                    
                 }
             }
             System.out.println("Exit status: %d".formatted(process.exitValue()));
