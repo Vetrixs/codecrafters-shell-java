@@ -59,7 +59,7 @@ public class Controller {
         String targetDir = input_array[1];
         Path targetAbsolutePath;
         if (targetDir.startsWith("~")){
-            targetAbsolutePath = Path.of(System.getProperty("user.home"));
+            targetAbsolutePath = Path.of(System.getenv("HOME"));
         } else if (targetDir.startsWith("./")) {
             targetDir = targetDir.replace("./", "");
             targetAbsolutePath = Path.of(currentDirectory.toString(), targetDir).toAbsolutePath();
