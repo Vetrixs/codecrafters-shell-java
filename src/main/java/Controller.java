@@ -37,6 +37,7 @@ public class Controller {
     }
 
     private void cd(String[] input_array) {
+
         if(input_array.length < 2){
             System.out.printf("%s: Missing directory argument%n", input_array[0]);
             return;
