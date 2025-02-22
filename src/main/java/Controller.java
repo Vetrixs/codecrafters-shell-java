@@ -1,15 +1,18 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Controller {
 
-    Set<String> validCommands = Set.of(new String[]{"type", "exit", "echo", "pwd", "cd"});
+    Set<String> validCommands = Set.of(new String[]{"type", "exit", "echo", "pwd", "cd", "ls"});
 
     Path currentDirectory = Paths.get("").toAbsolutePath();
 
@@ -30,21 +33,47 @@ public class Controller {
             case "cd":
                 cd(input);
                 break;
+            case "ls":
+                ls();
+                break;
             default:
                 runExternalProgram(input);
                 break;
         }
     }
 
+    private void ls() {
+        try {
+            Files.list(currentDirectory).forEach(System.out::println);
+        } catch (IOException ioException) {
+            System.err.println("Error printing files: " + ioException.getMessage());
+        }
+    }
+
     private void cd(String[] input_array) {
 
-        if(input_array.length < 2){
+        if (input_array.length < 2) {
             System.out.printf("%s: Missing directory argument%n", input_array[0]);
             return;
         }
         String targetDir = input_array[1];
-        if (Files.exists(Path.of(targetDir))) {
-            currentDirectory = Path.of(targetDir);
+        Path targetAbsolutePath;
+        if (targetDir.startsWith("./")) {
+            targetAbsolutePath = Path.of(currentDirectory.toString(), targetDir).toAbsolutePath();
+        } else if (targetDir.startsWith("../")) {
+            // count occurrences
+            int i = targetDir.split("\\.\\./", -1).length - 1;
+            List<String> list = Arrays.stream(currentDirectory.toString().split(Pattern.quote(File.separator))).collect(Collectors.toList());
+            for (int j = 0; j < i; j++) {
+                list.removeLast();
+            }
+            String newBasePath = String.join(File.separator, list);
+            targetAbsolutePath = Path.of(newBasePath);
+        } else {
+            targetAbsolutePath = Path.of(targetDir).toAbsolutePath();
+        }
+        if (Files.exists(targetAbsolutePath)) {
+            currentDirectory = targetAbsolutePath;
         } else {
             System.out.printf("%s: %s: No such file or directory%n", input_array[0], input_array[1]);
         }
