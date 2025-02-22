@@ -56,23 +56,8 @@ public class Main {
         try {
             // Execute the external command.
             process = new ProcessBuilder(input_array).start();
-
-            OutputStream outputStream = process.getOutputStream();
-
-            while (process.isAlive()) {
-                int c;
-                System.out.println("Normal Stream:");
-                while ((c = process.getInputStream().read()) != -1) {
-                    System.out.print((char) c);
-                }
-                int a;
-                System.out.println("#####");
-                System.out.println("Error Stream:");
-                while ((a = process.getErrorStream().read()) != -1) {
-                    System.out.print((char) a);
-                }
-            }
-            System.out.println("Exit status: %d".formatted(process.exitValue()));
+            process.getInputStream().transferTo(System.out);
+            process.getErrorStream().transferTo(System.out);
         } catch (IOException e) {
             System.err.println("Error executing command: " + e.getMessage());
         }
