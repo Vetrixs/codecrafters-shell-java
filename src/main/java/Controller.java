@@ -59,6 +59,7 @@ public class Controller {
         String targetDir = input_array[1];
         Path targetAbsolutePath;
         if (targetDir.startsWith("./")) {
+            targetDir = targetDir.replace("./", "");
             targetAbsolutePath = Path.of(currentDirectory.toString(), targetDir).toAbsolutePath();
         } else if (targetDir.startsWith("../")) {
             // count occurrences
