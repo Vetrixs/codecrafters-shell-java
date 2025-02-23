@@ -110,7 +110,7 @@ public class Controller {
             Integer start = quoteLocations.getFirst();
             quoteLocations.removeFirst();
             Integer end = quoteLocations.getFirst();
-            if (end +1 == quoteLocations.get(1)){
+            if (quoteLocations.size() != 1 && end + 1 == quoteLocations.get(1)) {
                 quoteLocations.removeFirst();
                 quoteLocations.removeFirst();
                 end = quoteLocations.getFirst();
