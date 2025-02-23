@@ -86,7 +86,11 @@ public class Controller {
     }
 
     private List<String> extractUnquotedArguments(String input) {
-        return Arrays.stream(input.strip().split(" ")).toList();
+        List<String> rawSplitted = Arrays.stream(input.strip().split(" ")).collect(Collectors.toList());
+        while (rawSplitted.contains("")) {
+            rawSplitted.remove("");
+        }
+        return rawSplitted;
     }
 
     private List<String> extractQuotedArguments(String[] input_array) {
