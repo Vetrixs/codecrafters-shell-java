@@ -1,7 +1,5 @@
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,9 +46,51 @@ public class Controller {
         List<String> cleanInput = new ArrayList<>();
         cleanInput.add(input_array[0]);
 
-        if (!(input_array.length >= 2)){
+        if (!(input_array.length >= 2)) {
             return input_array;
         }
+        List<String> quotedArguments = extractQuotedArguments(input_array);
+
+        String removedQuotedArgumentsArgs = input_array[1];
+        for (String quotedArgument : quotedArguments) {
+            removedQuotedArgumentsArgs = removedQuotedArgumentsArgs.replace(quotedArgument, "");
+        }
+        List<String> unquotedArguments = extractUnquotedArguments(removedQuotedArgumentsArgs);
+        List<String> arguments = rearrangeArguments(input_array[1], quotedArguments, unquotedArguments);
+
+        cleanInput.addAll(arguments);
+        String[] cleanArray = new String[cleanInput.size()];
+        return cleanInput.toArray(cleanArray);
+    }
+
+    private List<String> rearrangeArguments(String correct, List<String> quotedArguments, List<String> unquotedArguments) {
+        List<String> rearrangedArguments = new ArrayList<>();
+
+        int neededSize = quotedArguments.size() + unquotedArguments.size();
+        while (rearrangedArguments.size() != neededSize) {
+            correct = correct.stripLeading();
+            for (String arg : quotedArguments) {
+                if (correct.indexOf(arg) == 0) {
+                    rearrangedArguments.add(arg.replace("'", ""));
+                    correct = correct.replaceFirst(arg, "");
+                }
+            }
+            for (String arg : unquotedArguments) {
+                if (correct.indexOf(arg) == 0) {
+                    rearrangedArguments.add(arg.replace("'", ""));
+                    correct = correct.replaceFirst(arg, "");
+                }
+            }
+        }
+        return rearrangedArguments;
+    }
+
+    private List<String> extractUnquotedArguments(String input) {
+        return Arrays.stream(input.strip().split(" ")).toList();
+    }
+
+    private List<String> extractQuotedArguments(String[] input_array) {
+        List<String> quotedArguments = new ArrayList<>();
         List<Integer> quoteLocations = new ArrayList<>();
         for (int i = 0; i < input_array[1].length(); i++) {
             char c = input_array[1].charAt(i);
@@ -67,10 +107,9 @@ public class Controller {
             quoteLocations.removeFirst();
             Integer end = quoteLocations.getFirst();
             quoteLocations.removeFirst();
-            cleanInput.add(input_array[1].substring(start +1,end));
+            quotedArguments.add(input_array[1].substring(start, end + 1));
         }
-        String[] cleanInputArray = new String[2];
-        return cleanInput.toArray(cleanInputArray);
+        return quotedArguments;
     }
 
     private void ls() {
