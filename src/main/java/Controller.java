@@ -110,7 +110,12 @@ public class Controller {
             Integer start = quoteLocations.getFirst();
             quoteLocations.removeFirst();
             Integer end = quoteLocations.getFirst();
-            quoteLocations.removeFirst();
+            if (end +1 == quoteLocations.get(1)){
+                quoteLocations.removeFirst();
+                quoteLocations.removeFirst();
+                end = quoteLocations.getFirst();
+                i++;
+            }
             quotedArguments.add(input_array[1].substring(start, end + 1));
         }
         return quotedArguments;
