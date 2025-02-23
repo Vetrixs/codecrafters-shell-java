@@ -11,8 +11,7 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
 
-            String[] input_array = input.split(" ");
-            controller.execute(input_array);
+            controller.execute(input);
         } while (true);
     }
 }

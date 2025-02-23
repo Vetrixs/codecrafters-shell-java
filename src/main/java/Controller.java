@@ -1,12 +1,11 @@
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -16,7 +15,8 @@ public class Controller {
 
     Path currentDirectory = Paths.get("").toAbsolutePath();
 
-    public void execute(String[] input) {
+    public void execute(String rawInput) {
+        String[] input = cleanInput(rawInput);
         switch (input[0]) {
             case "type":
                 type(input);
@@ -42,6 +42,37 @@ public class Controller {
         }
     }
 
+    public String[] cleanInput(String rawInput) {
+        String[] input_array = rawInput.split(" ", 2);
+
+        List<String> cleanInput = new ArrayList<>();
+        cleanInput.add(input_array[0]);
+
+        if (!(input_array.length >= 2)){
+            return input_array;
+        }
+        List<Integer> quoteLocations = new ArrayList<>();
+        for (int i = 0; i < input_array[1].length(); i++) {
+            char c = input_array[1].charAt(i);
+            if (String.valueOf(c).equals("'")) {
+                quoteLocations.add(i);
+            }
+        }
+        if (!((quoteLocations.size() % 2) == 0)) {
+            throw new IllegalArgumentException("Missing quotes");
+        }
+        int size = quoteLocations.size();
+        for (int i = 0; i < size / 2; i++) {
+            Integer start = quoteLocations.getFirst();
+            quoteLocations.removeFirst();
+            Integer end = quoteLocations.getFirst();
+            quoteLocations.removeFirst();
+            cleanInput.add(input_array[1].substring(start +1,end));
+        }
+        String[] cleanInputArray = new String[2];
+        return cleanInput.toArray(cleanInputArray);
+    }
+
     private void ls() {
         try {
             Files.list(currentDirectory).forEach(System.out::println);
@@ -58,7 +89,8 @@ public class Controller {
         }
         String targetDir = input_array[1];
         Path targetAbsolutePath;
-        if (targetDir.startsWith("~")){
+        if (targetDir.startsWith("~")) {
+            // System.getProperties("user.home");
             targetAbsolutePath = Path.of(System.getenv("HOME"));
         } else if (targetDir.startsWith("./")) {
             targetDir = targetDir.replace("./", "");
