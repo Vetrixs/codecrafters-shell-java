@@ -70,6 +70,7 @@ public class Controller {
                     sb.append(rawInput.charAt(i));
                     i++;
                 }
+                i++;
             }
 
             // get single quote arg
@@ -79,6 +80,7 @@ public class Controller {
                     sb.append(rawInput.charAt(i));
                     i++;
                 }
+                i++;
             }
             // get unquoted arg
             if (i < rawInput.length() && !Character.isWhitespace(rawInput.charAt(i))
@@ -89,7 +91,6 @@ public class Controller {
                     i++;
                 }
             }
-            i++;
         }
         if (!commandString.isEmpty() && !sb.isEmpty()) {
             argsList.add(sb.toString());
