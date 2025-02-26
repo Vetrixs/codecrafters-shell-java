@@ -48,6 +48,8 @@ public class Controller {
         while (i < rawInput.length()) {
             // remove preceding whitespace
             while (Character.isWhitespace(rawInput.charAt(i))) {
+                argsList.add(sb.toString());
+                sb = new StringBuilder();
                 i++;
             }
             // get command
@@ -57,40 +59,38 @@ public class Controller {
                     i++;
                 }
                 commandString = sb.toString();
+                sb = new StringBuilder();
             }
-            // get single quote arg
+            // get double quote arg
             if (i < rawInput.length() && rawInput.charAt(i) == '\"') {
                 i++;
-                sb = new StringBuilder();
                 while (rawInput.charAt(i) != '\"') {
                     sb.append(rawInput.charAt(i));
                     i++;
                 }
-                argsList.add(sb.toString());
             }
 
             // get single quote arg
             if (i < rawInput.length() && rawInput.charAt(i) == '\'') {
                 i++;
-                sb = new StringBuilder();
                 while (rawInput.charAt(i) != '\'') {
                     sb.append(rawInput.charAt(i));
                     i++;
                 }
-                argsList.add(sb.toString());
             }
             // get unquoted arg
             if (i < rawInput.length() && !Character.isWhitespace(rawInput.charAt(i))
                     && rawInput.charAt(i) != '\''
                     && rawInput.charAt(i) != '\"') {
-                sb = new StringBuilder();
                 while (i < rawInput.length() && !Character.isWhitespace(rawInput.charAt(i))) {
                     sb.append(rawInput.charAt(i));
                     i++;
                 }
-                argsList.add(sb.toString());
             }
             i++;
+        }
+        if (!commandString.isEmpty() && !sb.isEmpty()) {
+            argsList.add(sb.toString());
         }
         List<String> inputList = new ArrayList<>();
         inputList.add(commandString);
