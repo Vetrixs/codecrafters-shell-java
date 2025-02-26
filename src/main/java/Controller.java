@@ -41,82 +41,61 @@ public class Controller {
     }
 
     public String[] cleanInput(String rawInput) {
-        String[] input_array = rawInput.split(" ", 2);
-
-        List<String> cleanInput = new ArrayList<>();
-        cleanInput.add(input_array[0]);
-
-        if (!(input_array.length >= 2)) {
-            return input_array;
-        }
-        List<String> quotedArguments = extractQuotedArguments(input_array);
-
-        String removedQuotedArgumentsArgs = input_array[1];
-        for (String quotedArgument : quotedArguments) {
-            removedQuotedArgumentsArgs = removedQuotedArgumentsArgs.replace(quotedArgument, "");
-        }
-        List<String> unquotedArguments = extractUnquotedArguments(removedQuotedArgumentsArgs);
-        List<String> arguments = rearrangeArguments(input_array[1], quotedArguments, unquotedArguments);
-
-        cleanInput.addAll(arguments);
-        String[] cleanArray = new String[cleanInput.size()];
-        return cleanInput.toArray(cleanArray);
-    }
-
-    private List<String> rearrangeArguments(String correct, List<String> quotedArguments, List<String> unquotedArguments) {
-        List<String> rearrangedArguments = new ArrayList<>();
-
-        int neededSize = quotedArguments.size() + unquotedArguments.size();
-        while (rearrangedArguments.size() != neededSize) {
-            correct = correct.stripLeading();
-            for (String arg : quotedArguments) {
-                if (correct.indexOf(arg) == 0) {
-                    rearrangedArguments.add(arg.replace("'", ""));
-                    correct = correct.replaceFirst(arg, "");
+        List<String> argsList = new ArrayList<>();
+        String commandString = "";
+        int i = 0;
+        StringBuilder sb = new StringBuilder();
+        while (i < rawInput.length()) {
+            // remove preceding whitespace
+            while (Character.isWhitespace(rawInput.charAt(i))) {
+                i++;
+            }
+            // get command
+            if (commandString.isEmpty()) {
+                while (i < rawInput.length() && !Character.isWhitespace(rawInput.charAt(i))) {
+                    sb.append(rawInput.charAt(i));
+                    i++;
                 }
+                commandString = sb.toString();
             }
-            for (String arg : unquotedArguments) {
-                if (correct.indexOf(arg) == 0) {
-                    rearrangedArguments.add(arg.replace("'", ""));
-                    correct = correct.replaceFirst(arg, "");
+            // get single quote arg
+            if (i < rawInput.length() && rawInput.charAt(i) == '\"') {
+                i++;
+                sb = new StringBuilder();
+                while (rawInput.charAt(i) != '\"') {
+                    sb.append(rawInput.charAt(i));
+                    i++;
                 }
+                argsList.add(sb.toString());
             }
-        }
-        return rearrangedArguments;
-    }
 
-    private List<String> extractUnquotedArguments(String input) {
-        List<String> rawSplitted = Arrays.stream(input.strip().split(" ")).collect(Collectors.toList());
-        while (rawSplitted.contains("")) {
-            rawSplitted.remove("");
-        }
-        return rawSplitted;
-    }
-
-    private List<String> extractQuotedArguments(String[] input_array) {
-        List<String> quotedArguments = new ArrayList<>();
-        List<Integer> quoteLocations = new ArrayList<>();
-        for (int i = 0; i < input_array[1].length(); i++) {
-            char c = input_array[1].charAt(i);
-            if (String.valueOf(c).equals("'")) {
-                quoteLocations.add(i);
+            // get single quote arg
+            if (i < rawInput.length() && rawInput.charAt(i) == '\'') {
+                i++;
+                sb = new StringBuilder();
+                while (rawInput.charAt(i) != '\'') {
+                    sb.append(rawInput.charAt(i));
+                    i++;
+                }
+                argsList.add(sb.toString());
             }
-        }
-        if (!((quoteLocations.size() % 2) == 0)) {
-            throw new IllegalArgumentException("Missing quotes");
-        }
-        int size = quoteLocations.size();
-        for (int i = 0; i < size; i++) {
-            Integer start = quoteLocations.get(i);
-            Integer end = quoteLocations.get(i + 1);
+            // get unquoted arg
+            if (i < rawInput.length() && !Character.isWhitespace(rawInput.charAt(i))
+                    && rawInput.charAt(i) != '\''
+                    && rawInput.charAt(i) != '\"') {
+                sb = new StringBuilder();
+                while (i < rawInput.length() && !Character.isWhitespace(rawInput.charAt(i))) {
+                    sb.append(rawInput.charAt(i));
+                    i++;
+                }
+                argsList.add(sb.toString());
+            }
             i++;
-            if (i + 1 < quoteLocations.size() && quoteLocations.get(i + 1) == end + 1) {
-                end = quoteLocations.get(i + 2);
-                i = i + 2;
-            }
-            quotedArguments.add(input_array[1].substring(start, end + 1));
         }
-        return quotedArguments;
+        List<String> inputList = new ArrayList<>();
+        inputList.add(commandString);
+        inputList.addAll(argsList);
+        return inputList.toArray(new String[0]);
     }
 
     private void ls() {
