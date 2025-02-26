@@ -106,12 +106,13 @@ public class Controller {
             throw new IllegalArgumentException("Missing quotes");
         }
         int size = quoteLocations.size();
-        for (int i = 0; i < size / 2; i++) {
+        for (int i = 0; i < size; i++) {
             Integer start = quoteLocations.get(i);
             Integer end = quoteLocations.get(i + 1);
             i++;
             if (i + 1 < quoteLocations.size() && quoteLocations.get(i + 1) == end + 1) {
                 end = quoteLocations.get(i + 2);
+                i = i + 2;
             }
             quotedArguments.add(input_array[1].substring(start, end + 1));
         }
