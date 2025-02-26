@@ -48,8 +48,10 @@ public class Controller {
         while (i < rawInput.length()) {
             // remove preceding whitespace
             while (Character.isWhitespace(rawInput.charAt(i))) {
-                argsList.add(sb.toString());
-                sb = new StringBuilder();
+                if (!sb.isEmpty()) {
+                    argsList.add(sb.toString());
+                    sb = new StringBuilder();
+                }
                 i++;
             }
             // get command
